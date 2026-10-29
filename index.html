@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- Puente Telegram → app de Winamax. Telegram solo deja pulsar enlaces https, y la app
+     se abre con wam://betting?target=match-<partido>&b=<mercado>&o=<cuota>, que abre el
+     partido y mete esa cuota en la cesta (no apuesta: el importe y la confirmación son tuyos).
+     Enlace: https://<esta página>#m=<partido>&b=<mercado>&o=<cuota>  (lo genera avisos.py). -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abrir en Winamax</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background: #111; color: #eee;
+         display: flex; flex-direction: column; align-items: center; justify-content: center;
+         min-height: 100vh; margin: 0; padding: 16px; text-align: center; }
+  a { display: block; margin: 12px 0; padding: 14px 22px; border-radius: 10px;
+      background: #e3001b; color: #fff; text-decoration: none; font-weight: 600; }
+  a.web { background: #333; }
+  p { color: #aaa; }
+</style>
+</head>
+<body>
+<a id="app" href="#">📲 Abrir en la app de Winamax</a>
+<a id="web" class="web" href="#">🌐 Abrir en la web</a>
+<p id="msg"></p>
+<script>
+  var h = new URLSearchParams(location.hash.slice(1));
+  var m = h.get("m"), b = h.get("b"), o = h.get("o"), bc = h.get("bc");
+  var num = function (x) { return /^\d+$/.test(x || ""); };
+  if (num(m)) {
+    var app = "wam://betting?target=match-" + m + (num(b) && num(o) ? "&b=" + b + "&o=" + o : "");
+    var web = "https://www.winamax.es/apuestas-deportivas/match/" + m +
+              (num(bc) && num(b) ? "#bc=" + bc + "&b=" + b : "");
+    document.getElementById("app").href = app;
+    document.getElementById("web").href = web;
+    location.href = app;   // Safari pregunta «¿Abrir en Winamax?»
+  } else {
+    document.getElementById("msg").textContent = "Enlace incompleto.";
+  }
+</script>
+</body>
+</html>
